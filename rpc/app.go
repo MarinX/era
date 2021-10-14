@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"net/rpc"
+	"net/rpc/jsonrpc"
 )
 
 type Store interface {
@@ -22,30 +23,24 @@ type Service interface {
 	CreateKey() (private string, public string, err error)
 }
 
-type Config interface {
-	GetAPIKey() string
-}
-
 type App struct {
 	store   Store
 	service Service
-	config  Config
 }
 
-func New(store Store, service Service, config Config) *App {
+func New(store Store, service Service) *App {
 	return &App{
 		store:   store,
 		service: service,
-		config:  config,
 	}
 }
 
-func (a *App) ListenAndServe(addr string) error {
-	apiKey := a.config.GetAPIKey()
+func ListenAndServe(methods interface{}, addr string, apiKey string) error {
 	server := rpc.NewServer()
-	if err := server.Register(a); err != nil {
+	if err := server.Register(methods); err != nil {
 		return err
 	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get("X-API-Key")
@@ -54,7 +49,12 @@ func (a *App) ListenAndServe(addr string) error {
 			return
 		}
 
-		server.ServeHTTP(rw, r)
+		rw.Header().Set("Content-type", "application/json")
+		server.ServeCodec(jsonrpc.NewServerCodec(&Conn{
+			in:  r.Body,
+			out: rw,
+		}))
+
 	})
 	return http.ListenAndServe(addr, mux)
 }
