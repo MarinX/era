@@ -16,8 +16,8 @@ type Key struct {
 }
 
 type KeyResponse struct {
-	Key  *Key   `json:"key"`
-	Keys []*Key `json:"keys"`
+	Key  *Key   `json:"key,omitempty"`
+	Keys []*Key `json:"keys,omitempty"`
 }
 
 func (a *App) GenerateKey(req *Key, res *KeyResponse) error {
