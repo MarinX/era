@@ -66,12 +66,11 @@ func (s *Store) ReadAll(key string, value interface{}) error {
 	}
 
 	sliceType := reflect.Indirect(ref).Type().Elem()
-	model := reflect.New(sliceType.Elem()).Interface()
 	results := reflect.MakeSlice(reflect.Indirect(ref).Type(), 0, 0)
-
 	err := s.db.View(func(t *bolt.Tx) error {
 		b := t.Bucket([]byte(key))
 		return b.ForEach(func(k, v []byte) error {
+			model := reflect.New(sliceType.Elem()).Interface()
 			err := json.Unmarshal(v, model)
 			if err != nil {
 				return err
