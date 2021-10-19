@@ -1,0 +1,25 @@
+{
+    "name": "Era",
+    "description": "Age Encryption App",
+    "author": {
+     "name": "Marin Basic",
+     "email": "marin.basic02@gmail.com"
+    },
+    "version": "1.0",
+    "binaryname": "era",
+    "frontend": {
+     "dir": "frontend",
+     "install": "npm install",
+     "build": "npm run build",
+     "bridge": "src",
+     "serve": "npm run serve"
+    },
+    "tags": "",
+    "WailsVersion": "",
+    "CrossCompile": false,
+    "Platform": "",
+    "Architecture": "",
+    "LdFlags": "",
+    "GoPath": "",
+    "UseFirebug": false
+   }     

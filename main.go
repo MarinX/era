@@ -77,7 +77,7 @@ func main() {
 		logrus.Info("Exiting...")
 	default:
 		app := wails.CreateApp(&wails.AppConfig{
-			Width:            900,
+			Width:            1100,
 			Height:           1200,
 			Title:            "ERA - Age encryption app",
 			JS:               js,
