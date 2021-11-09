@@ -69,6 +69,27 @@ const bridge = {
         }
         return resp.data;
     },
+    async selectFile() {
+        const resp = await window.backend.GoBridge.SelectFile();
+        if(resp.error) {
+            throw new Error(resp.error);
+        }
+        return resp.data;
+    },
+    async encrypt(encryptType,contactList,data) {
+        let output = '';
+        console.log(contactList);
+        if (encryptType === 'file') {
+            const resp = await window.backend.GoBridge.EncryptFile(contactList, data, true);
+            output = resp.data.output_path;
+        } else if (encryptType === 'text') {
+            const resp = await window.backend.GoBridge.EncryptText(contactList, data, true);
+            output = resp.data.output;
+        } else {
+            throw new Error("Unknown encryption type");
+        }
+        return output;
+    }
 
 }
 export default bridge;
