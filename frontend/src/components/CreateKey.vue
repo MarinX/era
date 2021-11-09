@@ -41,7 +41,7 @@
         <v-spacer></v-spacer>
         <v-btn
             text
-            @click="this.show = false"
+            @click="show = false"
         >
           Close
         </v-btn>
