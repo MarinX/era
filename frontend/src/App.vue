@@ -10,7 +10,7 @@
         <v-tab to="/keys">
           Keys
         </v-tab>
-        <v-tab>
+        <v-tab to="/wizard/encrypt">
           Encrypt
         </v-tab>
         <v-tab>
