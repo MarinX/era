@@ -27,14 +27,17 @@ func (a *App) EncryptText(req *Encrypt, res *EncryptResponse) error {
 	if len(req.Text) == 0 {
 		return errors.New("empty body is not allowed")
 	}
-	// check if we have good recipients
+	var keys []string
 	for _, rec := range req.Recipients {
-		if !a.service.IsRecipient(rec) {
-			return fmt.Errorf("%s is not a valid recipient key", rec)
+		var tmp Key
+		err := a.store.Read("contacts", rec, &tmp)
+		if err != nil {
+			return err
 		}
+		keys = append(keys, tmp.Key)
 	}
 	buff := bytes.NewBuffer(nil)
-	err := a.service.Encrypt(strings.NewReader(req.Text), buff, true, req.Recipients...)
+	err := a.service.Encrypt(strings.NewReader(req.Text), buff, true, keys...)
 	if err != nil {
 		return err
 	}
@@ -46,11 +49,14 @@ func (a *App) EncryptFile(req *Encrypt, res *EncryptResponse) error {
 	if len(req.Recipients) == 0 {
 		return errors.New("at least 1 recipient needs to be added")
 	}
-	// check if we have good recipients
+	var keys []string
 	for _, rec := range req.Recipients {
-		if !a.service.IsRecipient(rec) {
-			return fmt.Errorf("%s is not a valid recipient key", rec)
+		var tmp Key
+		err := a.store.Read("contacts", rec, &tmp)
+		if err != nil {
+			return err
 		}
+		keys = append(keys, tmp.Key)
 	}
 	if _, err := os.Stat(req.FilePath); os.IsNotExist(err) {
 		return fmt.Errorf("%s not found", req.FilePath)
@@ -66,5 +72,5 @@ func (a *App) EncryptFile(req *Encrypt, res *EncryptResponse) error {
 		return err
 	}
 	defer out.Close()
-	return a.service.Encrypt(fd, out, req.Armor, req.Recipients...)
+	return a.service.Encrypt(fd, out, req.Armor, keys...)
 }

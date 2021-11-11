@@ -29,14 +29,18 @@ func (a *App) DecryptText(req *Decrypt, res *DecryptResponse) error {
 		return errors.New("text is required")
 	}
 
+	var keys []string
 	for _, k := range req.Keys {
-		if !a.service.IsIdentity(k) {
-			return fmt.Errorf("%s is not a valid identity key", k)
+		var tmp Key
+		err := a.store.Read("keys", k, &tmp)
+		if err != nil {
+			return err
 		}
+		keys = append(keys, tmp.Private)
 	}
 
 	buffer := bytes.NewBuffer(nil)
-	err := a.service.Decrypt(strings.NewReader(req.Text), buffer, req.Keys...)
+	err := a.service.Decrypt(strings.NewReader(req.Text), buffer, keys...)
 	if err != nil {
 		return fmt.Errorf("error decrypting %v", err)
 	}
@@ -48,11 +52,14 @@ func (a *App) DecryptFile(req *Decrypt, res *DecryptResponse) error {
 	if len(req.Keys) == 0 {
 		return errors.New("at least 1 identity needs to be provided")
 	}
-	// check if we have good identities
+	var keys []string
 	for _, k := range req.Keys {
-		if !a.service.IsIdentity(k) {
-			return fmt.Errorf("%s is not a valid identity key", k)
+		var tmp Key
+		err := a.store.Read("keys", k, &tmp)
+		if err != nil {
+			return err
 		}
+		keys = append(keys, tmp.Private)
 	}
 	if _, err := os.Stat(req.FilePath); os.IsNotExist(err) {
 		return fmt.Errorf("%s not found", req.FilePath)
@@ -74,5 +81,5 @@ func (a *App) DecryptFile(req *Decrypt, res *DecryptResponse) error {
 		return err
 	}
 	defer out.Close()
-	return a.service.Decrypt(fd, out, req.Keys...)
+	return a.service.Decrypt(fd, out, keys...)
 }
