@@ -13,7 +13,7 @@
         <v-tab to="/wizard/encrypt">
           Encrypt
         </v-tab>
-        <v-tab>
+        <v-tab to="/wizard/decrypt">
           Decrypt
         </v-tab>
       </v-tabs>

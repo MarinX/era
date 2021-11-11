@@ -66,6 +66,8 @@
                   solo
                   v-model="selectedInput"
                   label="Enter text to encrypt"
+                  row-height="75"
+                  auto-grow
               ></v-textarea>
             </v-radio-group>
 
@@ -116,6 +118,7 @@
           <v-card-title>Your results</v-card-title>
           <v-card-text>
             <v-textarea
+                auto-grow
                 solo
                 v-model="resultText"
                 readonly
@@ -176,7 +179,7 @@ export default {
 
     async processEncrypt() {
       try{
-        this.resultText = await bridge.encrypt(this.selectedType, this.selectedContacts.map((c)=>{return c.key}),this.selectedInput);
+        this.resultText = await bridge.encrypt(this.selectedType, this.selectedContacts.map((c)=>{return c.id}),this.selectedInput);
       }catch (e) {
         this.error = e.message;
       }

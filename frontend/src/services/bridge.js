@@ -78,12 +78,24 @@ const bridge = {
     },
     async encrypt(encryptType,contactList,data) {
         let output = '';
-        console.log(contactList);
         if (encryptType === 'file') {
             const resp = await window.backend.GoBridge.EncryptFile(contactList, data, true);
             output = resp.data.output_path;
         } else if (encryptType === 'text') {
             const resp = await window.backend.GoBridge.EncryptText(contactList, data, true);
+            output = resp.data.output;
+        } else {
+            throw new Error("Unknown encryption type");
+        }
+        return output;
+    },
+    async decrypt(encryptType,keyList,data) {
+        let output = '';
+        if (encryptType === 'file') {
+            const resp = await window.backend.GoBridge.DecryptFile(keyList, data);
+            output = resp.data.output_path;
+        } else if (encryptType === 'text') {
+            const resp = await window.backend.GoBridge.DecryptText(keyList, data);
             output = resp.data.output;
         } else {
             throw new Error("Unknown encryption type");

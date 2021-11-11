@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import ContactPage from './pages/Contacts.vue'
 import KeysPage from './pages/Keys.vue'
 import EncryptPage from './pages/Encrypt.vue'
+import DecryptPage from './pages/Decrypt.vue'
 
 Vue.use(VueRouter)
 
@@ -12,7 +13,7 @@ const routes = [
     { component: ContactPage, name: 'Contacts', path: '/wizard/key' },
     { component: ContactPage, name: 'Contacts', path: '/wizard/contact' },
     { component: EncryptPage, name: 'Encrypt', path: '/wizard/encrypt' },
-    { component: ContactPage, name: 'Contacts', path: '/wizard/decrypt' },
+    { component: DecryptPage, name: 'Contacts', path: '/wizard/decrypt' },
 ]
 
 const router = new VueRouter({
